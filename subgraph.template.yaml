@@ -4,9 +4,10 @@ schema:
 dataSources:
   - kind: ethereum
     name: Bridger
-    network: matic
+    network: {{ network }}
     source:
-      address: "0x28542E4AF3De534ca36dAF342febdA541c937C5a"
+      address: {{ bridger }}
+      startBlock: {{ starting_block }}
       abi: Bridger
     mapping:
       kind: ethereum/events
