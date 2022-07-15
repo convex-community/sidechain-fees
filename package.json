@@ -4,10 +4,18 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ convex-community/sidechain-fees",
-    "create-local": "graph create --node http://localhost:8020/ convex-community/sidechain-fees",
-    "remove-local": "graph remove --node http://localhost:8020/ convex-community/sidechain-fees",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 convex-community/sidechain-fees"
+    "prepare:avalanche": "mustache config/avalanche.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:fantom": "mustache config/fantom.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:arbitrum": "mustache config/arbitrum.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:matic": "mustache config/matic.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:xdai": "mustache config/xdai.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:optimism": "mustache config/optimism.json subgraph.template.yaml > subgraph.yaml",
+    "deploy:avalanche": "graph deploy --node https://api.thegraph.com/deploy/ convex-community/sidechain-fees-avalanche",
+    "deploy:fantom": "graph deploy --node https://api.thegraph.com/deploy/ convex-community/sidechain-fees-fantom",
+    "deploy:arbitrum": "graph deploy --node https://api.thegraph.com/deploy/ convex-community/sidechain-fees-arbitrum",
+    "deploy:matic": "graph deploy --node https://api.thegraph.com/deploy/ convex-community/sidechain-fees-matic",
+    "deploy:xdai": "graph deploy --node https://api.thegraph.com/deploy/ convex-community/sidechain-fees-xdai",
+    "deploy:optimism": "graph deploy --node https://api.thegraph.com/deploy/ convex-community/sidechain-fees-optimism"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.30.3",
