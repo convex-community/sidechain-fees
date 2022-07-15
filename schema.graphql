@@ -1,7 +1,9 @@
-type BridgedFees @entity {
+type BridgedFeesRecord @entity {
   id: ID!
   value: BigDecimal!
   amount: BigInt!
-  token: BigInt!
+  token: Bytes!
+  tx: Bytes!
   timestamp: BigInt!
+  week: BigInt!
 }
