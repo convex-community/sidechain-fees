@@ -1,0 +1,69 @@
+[
+  {
+    "name": "CommitOwnership",
+    "inputs": [{ "name": "admin", "type": "address", "indexed": false }],
+    "anonymous": false,
+    "type": "event"
+  },
+  {
+    "name": "ApplyOwnership",
+    "inputs": [{ "name": "admin", "type": "address", "indexed": false }],
+    "anonymous": false,
+    "type": "event"
+  },
+  {
+    "name": "AssetBridged",
+    "inputs": [
+      { "name": "token", "type": "address", "indexed": false },
+      { "name": "amount", "type": "uint256", "indexed": false }
+    ],
+    "anonymous": false,
+    "type": "event"
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "constructor",
+    "inputs": [{ "name": "_admin", "type": "address" }],
+    "outputs": []
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "name": "bridge",
+    "inputs": [{ "name": "_token", "type": "address" }],
+    "outputs": [{ "name": "", "type": "bool" }],
+    "gas": 12314
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "name": "commit_transfer_ownership",
+    "inputs": [{ "name": "_addr", "type": "address" }],
+    "outputs": [],
+    "gas": 39512
+  },
+  {
+    "stateMutability": "nonpayable",
+    "type": "function",
+    "name": "accept_transfer_ownership",
+    "inputs": [],
+    "outputs": [],
+    "gas": 39400
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "name": "admin",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address" }],
+    "gas": 2616
+  },
+  {
+    "stateMutability": "view",
+    "type": "function",
+    "name": "future_admin",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address" }],
+    "gas": 2646
+  }
+]
