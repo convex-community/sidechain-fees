@@ -54,9 +54,7 @@ typings/
 .eslintcache
 
 # file generated from templates
-subgraphs/volume/subgraph.yaml
-subgraphs/volume/src/mapping.ts
-packages/constants/index.ts
+subgraph.yaml
 
 # Microbundle cache
 .rpt2_cache/
