@@ -1,55 +1,49 @@
-import { BigInt } from "@graphprotocol/graph-ts"
+import {Address, BigDecimal, BigInt, Bytes} from "@graphprotocol/graph-ts"
 import {
-  Bridger,
-  CommitOwnership,
-  ApplyOwnership,
   AssetBridged
 } from "../generated/Bridger/Bridger"
-import { ExampleEntity } from "../generated/schema"
+import { BridgedFeesRecord } from "../generated/schema"
+import {ERC20} from "../generated/Bridger/ERC20";
 
-export function handleCommitOwnership(event: CommitOwnership): void {
-  // Entities can be loaded from the store using a string ID; this ID
-  // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
+const WEEK = BigInt.fromI32(60 * 60 * 24 * 7)
 
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (!entity) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
-
-    // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
-  }
-
-  // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
-
-  // Entity fields can be set based on event parameters
-  entity.admin = event.params.admin
-
-  // Entities can be written to the store with `.save()`
-  entity.save()
-
-  // Note: If a handler doesn't require existing field values, it is faster
-  // _not_ to load the entity from the store. Instead, create it fresh with
-  // `new Entity(...)`, set the fields that should be updated and save the
-  // entity back to the store. Fields that were not set or unset remain
-  // unchanged, allowing for partial updates to be applied.
-
-  // It is also possible to access smart contracts from mappings. For
-  // example, the contract that has emitted the event can be connected to
-  // with:
-  //
-  // let contract = Contract.bind(event.address)
-  //
-  // The following functions can then be called on this contract to access
-  // state variables and other data:
-  //
-  // - contract.bridge(...)
-  // - contract.admin(...)
-  // - contract.future_admin(...)
+function getIntervalFromTimestamp(timestamp: BigInt, interval: BigInt): BigInt {
+  return timestamp.div(interval).times(interval)
 }
 
-export function handleApplyOwnership(event: ApplyOwnership): void {}
+function exponentToBigDecimal(decimals: i32): BigDecimal {
+  let bd = BigDecimal.fromString('1')
+  for (let i = 0; i < decimals; i++) {
+    bd = bd.times(BigDecimal.fromString('10'))
+  }
+  return bd
+}
 
-export function handleAssetBridged(event: AssetBridged): void {}
+function getBridgedFeesRecord(token: Address, timestamp: BigInt, tx: Bytes): BridgedFeesRecord {
+  const week = getIntervalFromTimestamp(timestamp, WEEK)
+  const recordId = token.toHexString() + '-' + tx.toHexString()
+  let record = BridgedFeesRecord.load(recordId)
+  if (!record) {
+    record = new BridgedFeesRecord(recordId)
+    record.token = token
+    record.timestamp = timestamp
+    record.week = week
+    record.value = BigDecimal.zero()
+    record.amount = BigInt.zero()
+    record.tx = tx
+    record.save()
+  }
+  return record
+}
+
+export function handleAssetBridged(event: AssetBridged): void {
+  const token = event.params.token
+
+  const record = getBridgedFeesRecord(token, event.block.timestamp, event.transaction.hash)
+  record.amount = record.amount.plus(event.params.amount)
+  const tokenContract = ERC20.bind(token)
+  const decimalsResult = tokenContract.try_decimals()
+  const decimals = decimalsResult.reverted ? 18 : decimalsResult.value
+  record.value = record.value.plus(event.params.amount.toBigDecimal().div(exponentToBigDecimal(decimals)))
+  record.save()
+}
