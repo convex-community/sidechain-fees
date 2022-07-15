@@ -6,7 +6,7 @@ dataSources:
     name: Bridger
     network: {{ network }}
     source:
-      address: {{ bridger }}
+      address: "{{ bridger }}"
       startBlock: {{ starting_block }}
       abi: Bridger
     mapping:
